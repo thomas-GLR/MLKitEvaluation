@@ -50,7 +50,7 @@ android {
 }
 
 dependencies {
-
+    implementation (libs.locationtech.jts.core)
     implementation(libs.text.recognition)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

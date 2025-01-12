@@ -1,18 +1,38 @@
 package com.example.mlkitevaluation
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
@@ -21,8 +41,12 @@ fun PerformanceEvaluationScreen(
     navController: NavController,
     viewModel: PerformanceViewModel = viewModel(factory = PerformanceViewModel.Factory)
 ) {
-    val textBlocks by viewModel.textBlocks.collectAsState()
-    val groundTruths by viewModel.groundTruths.collectAsState()
+    val totalNumberImages by viewModel.totalNumberImages.collectAsState()
+    val currentNumberImagesProcess by viewModel.currentNumberImagesProcess.collectAsState()
+    val totalTextHorizontalResult by viewModel.totalTextHorizontalResult.collectAsState()
+    val totalTextCurvedResult by viewModel.totalTextCurvedResult.collectAsState()
+    val totalTextMultiOrientedResult by viewModel.totalTextMultiOrientedResult.collectAsState()
+    val imagesResultsByImagesNames by viewModel.imagesResultsByImagesNames.collectAsState()
 
     Scaffold(
         topBar = {
@@ -34,45 +58,13 @@ fun PerformanceEvaluationScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            for (textBlock in textBlocks) {
-                for (line in textBlock.lines) {
-                    if (line.text == "PELA 4JAR") {
-                        val points: MutableList<Pair<Float, Float>> = mutableListOf()
-                        points.add(Pair(230f, 402f))
-                        points.add(Pair(292f, 430f))
-                        points.add(Pair(358f, 395f))
-                        points.add(Pair(384f, 419f))
-                        points.add(Pair(393f, 463f))
-                        points.add(Pair(211f, 425f))
-                        CustomPolygon(points, Color.Red)
-                    }
-                    for (element in line.elements) {
-                        val points: MutableList<Pair<Float, Float>> = mutableListOf();
-                        element.cornerPoints?.forEach {
-                            points.add(Pair(it.x.toFloat(), it.y.toFloat()))
-                        }
-                        CustomPolygon(points)
-                    }
-                }
-            }
-            for (groundTruth in groundTruths) {
-                val points: MutableList<Pair<Float, Float>> = mutableListOf()
-                for (i in groundTruth.x[0].indices) {
-                    points.add(Pair(groundTruth.x[0][i], groundTruth.y[0][i]))
-                }
-                CustomPolygon(points, Color.Red)
+        if (currentNumberImagesProcess < totalNumberImages) {
+
+        } else {
+            Column(modifier = Modifier.padding(innerPadding)) {
+
             }
         }
-
-//        Column(modifier = Modifier.padding(innerPadding)) {
-//            Text("Performance")
-//            LazyColumn {
-//                items(viewModel.imagesFilesNames.value) {
-//                    Text(text = it)
-//                }
-//            }
-//        }
     }
 }
 
