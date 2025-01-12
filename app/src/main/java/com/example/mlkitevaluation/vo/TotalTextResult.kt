@@ -2,17 +2,17 @@ package com.example.mlkitevaluation.vo
 
 data class TotalTextResult(
     val orientation: TotalTextOrientation,
-    var charDistance: Int,
+    var charDistanceInError: Int,
     var totalChars: Int,
-    var wordDistance: Int,
+    var wordDistanceInError: Int,
     var totalWords: Int
 ) {
     constructor(orientation: TotalTextOrientation) : this(orientation, 0, 0, 0, 0)
 
     fun updateTotalTextResult(charDistance: Int, totalChars: Int, wordDistance: Int, totalWords: Int) {
-        this.charDistance += charDistance
+        this.charDistanceInError += charDistance
         this.totalChars += totalChars
-        this.wordDistance += wordDistance
+        this.wordDistanceInError += wordDistance
         this.totalWords += totalWords
     }
 }

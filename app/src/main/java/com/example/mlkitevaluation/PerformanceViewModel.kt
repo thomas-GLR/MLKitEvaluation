@@ -17,13 +17,13 @@ import com.example.mlkitevaluation.vo.TotalTextResult
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.Text.Element
-import com.google.mlkit.vision.text.Text.TextBlock
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -199,37 +199,66 @@ class PerformanceViewModel(application: Application) : AndroidViewModel(applicat
                 )
                 _imagesResultsByImagesNames.value.putIfAbsent(fileName, mutableListOf())
                 _imagesResultsByImagesNames.value[fileName]?.add(totalTextImageResult)
+                val updatedResult = when (gtMatch.orientation) {
+                    TotalTextOrientation.CURVED -> _totalTextCurvedResult.value.copy(
+                        charDistanceInError = _totalTextCurvedResult.value.charDistanceInError + charDistance,
+                        totalChars = _totalTextCurvedResult.value.totalChars + elementText.length,
+                        wordDistanceInError = _totalTextCurvedResult.value.wordDistanceInError + wordDistance,
+                        totalWords = _totalTextCurvedResult.value.totalWords + 1
+                    )
 
-                when (gtMatch.orientation) {
-                    TotalTextOrientation.CURVED -> {
-                        _totalTextCurvedResult.value.updateTotalTextResult(
-                            charDistance,
-                            elementText.length,
-                            wordDistance,
-                            1
-                        )
-                    }
+                    TotalTextOrientation.HORIZONTAL -> _totalTextHorizontalResult.value.copy(
+                        charDistanceInError = _totalTextHorizontalResult.value.charDistanceInError + charDistance,
+                        totalChars = _totalTextHorizontalResult.value.totalChars + elementText.length,
+                        wordDistanceInError = _totalTextHorizontalResult.value.wordDistanceInError + wordDistance,
+                        totalWords = _totalTextHorizontalResult.value.totalWords + 1
+                    )
 
-                    TotalTextOrientation.HORIZONTAL -> {
-                        _totalTextHorizontalResult.value.updateTotalTextResult(
-                            charDistance,
-                            elementText.length,
-                            wordDistance,
-                            1
-                        )
-                    }
+                    TotalTextOrientation.MULTI_ORIENTED -> _totalTextMultiOrientedResult.value.copy(
+                        charDistanceInError = _totalTextMultiOrientedResult.value.charDistanceInError + charDistance,
+                        totalChars = _totalTextMultiOrientedResult.value.totalChars + elementText.length,
+                        wordDistanceInError = _totalTextMultiOrientedResult.value.wordDistanceInError + wordDistance,
+                        totalWords = _totalTextMultiOrientedResult.value.totalWords + 1
+                    )
 
-                    TotalTextOrientation.MULTI_ORIENTED -> {
-                        _totalTextMultiOrientedResult.value.updateTotalTextResult(
-                            charDistance,
-                            elementText.length,
-                            wordDistance,
-                            1
-                        )
-                    }
-
-                    TotalTextOrientation.OTHER -> Log.i(TAG, "# orientation")
+                    else -> null
                 }
+                when (gtMatch.orientation) {
+                    TotalTextOrientation.CURVED -> _totalTextCurvedResult.value = updatedResult!!
+                    TotalTextOrientation.HORIZONTAL -> _totalTextHorizontalResult.value = updatedResult!!
+                    TotalTextOrientation.MULTI_ORIENTED -> _totalTextMultiOrientedResult.value = updatedResult!!
+                    else -> Log.i(TAG, "# orientation")
+                }
+//                when (gtMatch.orientation) {
+//                    TotalTextOrientation.CURVED -> {
+//                        _totalTextCurvedResult.value.updateTotalTextResult(
+//                            charDistance,
+//                            elementText.length,
+//                            wordDistance,
+//                            1
+//                        )
+//                    }
+//
+//                    TotalTextOrientation.HORIZONTAL -> {
+//                        _totalTextHorizontalResult.value.updateTotalTextResult(
+//                            charDistance,
+//                            elementText.length,
+//                            wordDistance,
+//                            1
+//                        )
+//                    }
+//
+//                    TotalTextOrientation.MULTI_ORIENTED -> {
+//                        _totalTextMultiOrientedResult.value.updateTotalTextResult(
+//                            charDistance,
+//                            elementText.length,
+//                            wordDistance,
+//                            1
+//                        )
+//                    }
+//
+//                    TotalTextOrientation.OTHER -> Log.i(TAG, "# orientation")
+//                }
             } else {
                 Log.i(TAG, "Aucun match pour $elementText")
             }
