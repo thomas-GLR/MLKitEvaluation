@@ -119,8 +119,8 @@ class PerformanceViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private fun processPerformanceEvaluation() {
-        val list = imagesFilesNames.value.filter { it == "img11.jpg" }
-        list.forEach { fileName ->
+//        val list = imagesFilesNames.value.filter { it == "img11.jpg" }
+        imagesFilesNames.value.forEach { fileName ->
             val bitmap =
                 convertFileNameToBitmap(DatasetConstants.TOTAL_TEXT_IMAGES.folderName + "/" + fileName)
 
@@ -131,6 +131,7 @@ class PerformanceViewModel(application: Application) : AndroidViewModel(applicat
 
                 recognizer.process(image)
                     .addOnSuccessListener { texts ->
+                        _currentNumberImagesProcess.value
                         _currentNumberImagesProcess.value += 1
                         Log.i(
                             TAG,

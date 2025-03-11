@@ -80,6 +80,7 @@ fun PerformanceEvaluationScreen(
             if (totalNumberImages == 0) {
                 Text("Chargement des fichiers du dataset...")
             } else {
+                Text("$currentNumberImagesProcess / $totalNumberImages")
                 Column {
                     ShowResult(totalTextHorizontalResult)
                     ShowResult(totalTextMultiOrientedResult)
